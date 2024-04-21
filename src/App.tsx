@@ -2,7 +2,6 @@
 // import reactLogo from './assets/react.svg'
 // import viteLogo from '/vite.svg'
 import { TextareaForm } from './components/fragments/form'
-import { Button } from './components/ui/button'
 
 function App() {
   return (
