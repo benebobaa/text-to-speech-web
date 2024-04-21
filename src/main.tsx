@@ -2,15 +2,14 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
-// import { Toaster } from './components/ui/toaster.tsx'
 import { Toaster } from "@/components/ui/sonner"
 
-export default function RootLayout({ children }) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <head />
       <body>
-        <main>{children}</main>
+        <main>{ children }</main>
         <Toaster />
       </body>
     </html>
