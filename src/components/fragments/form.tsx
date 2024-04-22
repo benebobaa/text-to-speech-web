@@ -50,9 +50,34 @@ export function TextareaForm() {
       });
       // Make API call
       console.log(data.speech)
-      const response = await fetch(`https://tts.beneboba.me/text-to-speech/${encodeURIComponent(data.speech)}`);
+     
+      const response = await fetch(`https://tts.beneboba.me/text-to-speech/${encodeURIComponent(data.speech)}`,{
+        headers: {
+          'Accept': 'audio/mpeg'
+        }
+      });
+      // const response = await fetch(`https://tts.beneboba.me/text-to-speech/${encodeURIComponent(data.speech)}`,{
+      //   headers: {
+      //     'Accept': 'audio/mpeg'
+      //   }
+      // });
+
       console.log(response)
-      
+
+      const url = response.url;
+      const filename = url.substring(url.lastIndexOf('/') + 1);
+      const outfilename = "audio_" + filename.substring(0, 10);
+      // Initiate download
+      response.blob().then(blob => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = outfilename; // Use extracted filename
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+      });
+
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
