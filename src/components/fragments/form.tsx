@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-
+import { Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   Form,
@@ -16,6 +16,7 @@ import {
 import { Textarea } from "@/components/ui/textarea"
 // import { toast } from "@/components/ui/use-toast"
 import { toast } from "sonner"
+import { useState } from "react"
 
 const FormSchema = z.object({
   speech: z
@@ -29,19 +30,40 @@ const FormSchema = z.object({
 })
 
 export function TextareaForm() {
+
+  const [loading, setLoading] = useState(false); 
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
   })
 
-  function onSubmit(_data: z.infer<typeof FormSchema>) {
-    toast("Submitted", {
+  async function onSubmit(data: z.infer<typeof FormSchema>) {
+    try {
+      setLoading(true); // Set loading state to true
+      
+      toast("Submitted", {
         description: "Processing your request...",
         action: {
           label: "okay",
           onClick: () => console.log("okay"),
         },
-      })
+      });
+      // Make API call
+      console.log(data.speech)
+      const response = await fetch(`https://tts.beneboba.me/text-to-speech/${encodeURIComponent(data.speech)}`);
+      console.log(response)
+      
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      setLoading(false); // Set loading state to false after API call
+    } catch (error) {
+      console.error("Error:", error);
+      setLoading(false); // Set loading state to false on error
+    }
   }
+
 
   return (
     <Form {...form}>
@@ -66,7 +88,15 @@ export function TextareaForm() {
             </FormItem>
           )}
         />
-        <Button type="submit">Submit</Button>
+        <div className="flex space-x-4">
+        
+          <Button disabled={loading} type="submit"> {/* Disable button when loading */}
+            {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : ""} {/* Show loader when loading */}
+            Submit
+          </Button>
+
+        </div>
+        
       </form>
     </Form>
   )
